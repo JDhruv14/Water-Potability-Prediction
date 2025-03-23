@@ -24,14 +24,13 @@ class FeatureCreator(BaseEstimator, TransformerMixin):
         ]
         return X[final_features]
 
-# Load the model
 @st.cache_resource
 def load_model():
-    model_path = os.path.join(os.path.dirname(__file__), 'water_potability_model.pkl')
-    try:
+    model_path = os.path.join(os.path.dirname(__file__), 'models', 'water_potability_random_forest.pkl')
+    if os.path.exists(model_path):
         return pickle.load(open(model_path, 'rb'))
-    except FileNotFoundError:
-        st.error("Model file not found. Please check the path.")
+    else:
+        st.error("Model file not found in 'models/' directory. Please check the path.")
         return None
 
 def validate_numeric_input(value, min_val, max_val, field_name):
