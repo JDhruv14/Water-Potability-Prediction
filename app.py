@@ -51,34 +51,34 @@ if model:
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        ph = st.number_input('pH Level', min_value=0.0, help="Recommended range: 6.5 - 8.5")
-        hardness = st.number_input('Hardness (mg/L)', min_value=0.0, help="Recommended max: 300 mg/L")
-        solids = st.number_input('Solids (mg/L)', min_value=0.0, help="Total dissolved solids in water (No strict limit)")
+        pH = st.number_input('pH Level', min_value=0.0, help="Recommended range: 6.5 - 8.5")
+        Hardness = st.number_input('Hardness (mg/L)', min_value=0.0, help="Recommended max: 300 mg/L")
+        Solids = st.number_input('Solids (mg/L)', min_value=0.0, help="Total dissolved solids in water (No strict limit)")
     
     with col2:
-        chloramines = st.number_input('Chloramines (ppm)', min_value=0.0, help="Recommended max: 4 ppm")
-        sulfate = st.number_input('Sulfate (mg/L)', min_value=0.0, help="Recommended max: 250 mg/L")
-        conductivity = st.number_input('Conductivity (μS/cm)', min_value=0.0, help="Recommended max: 500 μS/cm")
+        Chloramines = st.number_input('Chloramines (ppm)', min_value=0.0, help="Recommended max: 4 ppm")
+        Sulfate = st.number_input('Sulfate (mg/L)', min_value=0.0, help="Recommended max: 250 mg/L")
+        Conductivity = st.number_input('Conductivity (μS/cm)', min_value=0.0, help="Recommended max: 500 μS/cm")
     
     with col3:
-        organic_carbon = st.number_input('Organic Carbon (mg/L)', min_value=0.0, help="Recommended max: 2 mg/L")
-        trihalomethanes = st.number_input('Trihalomethanes (μg/L)', min_value=0.0, help="Recommended max: 80 μg/L")
-        turbidity = st.number_input('Turbidity (NTU)', min_value=0.0, help="Recommended max: 5 NTU")
+        Organic_carbon = st.number_input('Organic Carbon (mg/L)', min_value=0.0, help="Recommended max: 2 mg/L")
+        Trihalomethanes = st.number_input('Trihalomethanes (μg/L)', min_value=0.0, help="Recommended max: 80 μg/L")
+        Turbidity = st.number_input('Turbidity (NTU)', min_value=0.0, help="Recommended max: 5 NTU")
     
     # Predict button
     if st.button('Predict Potability', type='primary'):
         try:
-            # Prepare input data
+            # Prepare input data with corrected column names
             input_data = pd.DataFrame({
-                'pH': [ph],
-                'Hardness': [hardness],
-                'Solids': [solids],
-                'Chloramines': [chloramines],
-                'Sulfate': [sulfate],
-                'Conductivity': [conductivity],
-                'Organic_carbon': [organic_carbon],
-                'Trihalomethanes': [trihalomethanes],
-                'Turbidity': [turbidity]
+                'pH': [pH],
+                'Hardness': [Hardness],
+                'Solids': [Solids],
+                'Chloramines': [Chloramines],
+                'Sulfate': [Sulfate],
+                'Conductivity': [Conductivity],
+                'Organic_carbon': [Organic_carbon],
+                'Trihalomethanes': [Trihalomethanes],
+                'Turbidity': [Turbidity]
             })
 
             # Make prediction
