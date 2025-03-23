@@ -51,19 +51,19 @@ if model:
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        ph = st.number_input('pH Level', min_value=0.0, max_value=14.0, help="Recommended range: 6.5 - 8.5")
-        hardness = st.number_input('Hardness (mg/L)', min_value=0.0, max_value=300.0, help="Maximum safe level: 300 mg/L")
-        solids = st.number_input('Solids (mg/L)', min_value=0.0, max_value=50000.0, help="Total dissolved solids in water")
+        ph = st.number_input('pH Level', min_value=0.0, help="Recommended range: 6.5 - 8.5")
+        hardness = st.number_input('Hardness (mg/L)', min_value=0.0, help="Recommended max: 300 mg/L")
+        solids = st.number_input('Solids (mg/L)', min_value=0.0, help="Total dissolved solids in water (No strict limit)")
     
     with col2:
-        chloramines = st.number_input('Chloramines (ppm)', min_value=0.0, max_value=4.0, help="Maximum safe level: 4 ppm")
-        sulfate = st.number_input('Sulfate (mg/L)', min_value=0.0, max_value=250.0, help="Maximum safe level: 250 mg/L")
-        conductivity = st.number_input('Conductivity (μS/cm)', min_value=0.0, max_value=500.0, help="Maximum safe level: 500 μS/cm")
+        chloramines = st.number_input('Chloramines (ppm)', min_value=0.0, help="Recommended max: 4 ppm")
+        sulfate = st.number_input('Sulfate (mg/L)', min_value=0.0, help="Recommended max: 250 mg/L")
+        conductivity = st.number_input('Conductivity (μS/cm)', min_value=0.0, help="Recommended max: 500 μS/cm")
     
     with col3:
-        organic_carbon = st.number_input('Organic Carbon (mg/L)', min_value=0.0, max_value=2.0, help="Maximum safe level: 2 mg/L")
-        trihalomethanes = st.number_input('Trihalomethanes (μg/L)', min_value=0.0, max_value=80.0, help="Maximum safe level: 80 μg/L")
-        turbidity = st.number_input('Turbidity (NTU)', min_value=0.0, max_value=5.0, help="Maximum safe level: 5 NTU")
+        organic_carbon = st.number_input('Organic Carbon (mg/L)', min_value=0.0, help="Recommended max: 2 mg/L")
+        trihalomethanes = st.number_input('Trihalomethanes (μg/L)', min_value=0.0, help="Recommended max: 80 μg/L")
+        turbidity = st.number_input('Turbidity (NTU)', min_value=0.0, help="Recommended max: 5 NTU")
     
     # Predict button
     if st.button('Predict Potability', type='primary'):
@@ -120,4 +120,6 @@ if model:
         - **Organic Carbon:** ≤ 2 mg/L
         - **Trihalomethanes:** ≤ 80 μg/L
         - **Turbidity:** ≤ 5 NTU
+
+        **Note:** These values are recommendations, but inputs beyond these levels are allowed. The model predicts water potability based on learned patterns.
         """)
