@@ -2,27 +2,6 @@ import os
 import pickle
 import streamlit as st
 import pandas as pd
-import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
-
-class FeatureCreator(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X):
-        X = X.copy()
-        final_features = [
-            'ph',  # Fixed lowercase name issue
-            'Hardness',
-            'Solids',
-            'Chloramines',
-            'Sulfate',
-            'Conductivity',
-            'Organic_carbon',
-            'Trihalomethanes',
-            'Turbidity'
-        ]
-        return X[final_features]
 
 @st.cache_resource
 def load_model():
@@ -36,47 +15,35 @@ def load_model():
 # Page configuration
 st.set_page_config(page_title="Water Potability Prediction", page_icon="💧")
 
-# Title and description
 st.title('💧 Water Potability Prediction')
 st.markdown("""
 This app predicts whether the given water sample is potable based on various water quality parameters.
-Please fill in all the fields below with the water sample's characteristics.
 """)
 
-# Load model
 model = load_model()
 
 if model:
-    # Create three columns for layout
-    col1, col2, col3 = st.columns(3)
+    # Input fields
+    ph = st.number_input('pH Level', help="Typical range: 6.5 - 8.5")
+    hardness = st.number_input('Hardness (mg/L)')
+    solids = st.number_input('Solids (mg/L)')
+    chloramines = st.number_input('Chloramines (ppm)')
+    sulfate = st.number_input('Sulfate (mg/L)')
+    conductivity = st.number_input('Conductivity (μS/cm)')
+    organic_carbon = st.number_input('Organic Carbon (mg/L)')
+    trihalomethanes = st.number_input('Trihalomethanes (μg/L)')
+    turbidity = st.number_input('Turbidity (NTU)')
 
-    with col1:
-        ph = st.number_input('pH Level', min_value=0.0, max_value=14.0, help="Recommended range: 6.5 - 8.5")
-        hardness = st.number_input('Hardness (mg/L)', min_value=0.0, max_value=300.0, help="Maximum safe level: 300 mg/L")
-        solids = st.number_input('Solids (mg/L)', min_value=0.0, max_value=50000.0, help="Total dissolved solids in water")
-    
-    with col2:
-        chloramines = st.number_input('Chloramines (ppm)', min_value=0.0, max_value=4.0, help="Maximum safe level: 4 ppm")
-        sulfate = st.number_input('Sulfate (mg/L)', min_value=0.0, max_value=250.0, help="Maximum safe level: 250 mg/L")
-        conductivity = st.number_input('Conductivity (μS/cm)', min_value=0.0, max_value=500.0, help="Maximum safe level: 500 μS/cm")
-    
-    with col3:
-        organic_carbon = st.number_input('Organic Carbon (mg/L)', min_value=0.0, max_value=2.0, help="Maximum safe level: 2 mg/L")
-        trihalomethanes = st.number_input('Trihalomethanes (μg/L)', min_value=0.0, max_value=80.0, help="Maximum safe level: 80 μg/L")
-        turbidity = st.number_input('Turbidity (NTU)', min_value=0.0, max_value=5.0, help="Maximum safe level: 5 NTU")
-    
     # Predict button
     if st.button('Predict Potability', type='primary'):
         try:
-            # Validate Inputs
+            # Check if all values are zero
             if all(v == 0 for v in [ph, hardness, solids, chloramines, sulfate, conductivity, organic_carbon, trihalomethanes, turbidity]):
                 st.error("⚠️ All values cannot be zero. This is not realistic water data.")
-            elif ph == 0:
-                st.error("⚠️ pH cannot be zero. Enter a valid pH value.")
             else:
                 # Prepare input data
                 input_data = pd.DataFrame({
-                    'ph': [ph],  # Fixed lowercase name
+                    'ph': [ph],  
                     'Hardness': [hardness],
                     'Solids': [solids],
                     'Chloramines': [chloramines],
@@ -88,30 +55,27 @@ if model:
                 })
 
                 # Make prediction
-                prediction = model.predict(input_data)
-                probability = model.predict_proba(input_data)[0][1]
+                prediction = model.predict(input_data)[0]
 
-                # Display result with probability
-                if probability > 0.8:
-                    if prediction[0] == 1:
-                        st.markdown(f"""
-                            <div style='background-color: #E1FFE4; padding: 20px; border-radius: 10px;'>
-                                <h3 style='color: #6BFF6B; margin: 0;'>✅ Water is Potable</h3>
-                                <p style='color: #4CAF50;'>The water is safe to drink. Probability: {probability * 100:.1f}%</p>
-                            </div>
-                        """, unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"""
-                            <div style='background-color: #FFE4E1; padding: 20px; border-radius: 10px;'>
-                                <h3 style='color: #FF6B6B; margin: 0;'>⚠️ Water is Not Potable</h3>
-                                <p style='color: #FF3333;'>The water is unsafe for drinking. Probability: {probability * 100:.1f}%</p>
-                            </div>
-                        """, unsafe_allow_html=True)
+                # Display result
+                if prediction == 1:
+                    st.markdown("""
+                        <div style='background-color: #E1FFE4; padding: 20px; border-radius: 10px;'>
+                            <h3 style='color: #6BFF6B; margin: 0;'>✅ Water is Potable</h3>
+                            <p style='color: #4CAF50;'>The water is safe to drink.</p>
+                        </div>
+                    """, unsafe_allow_html=True)
                 else:
-                    st.warning(f"⚠️ Uncertain Prediction: Probability {probability * 100:.1f}%. Consider testing another sample.")
+                    st.markdown("""
+                        <div style='background-color: #FFE4E1; padding: 20px; border-radius: 10px;'>
+                            <h3 style='color: #FF6B6B; margin: 0;'>⚠️ Water is Not Potable</h3>
+                            <p style='color: #FF3333;'>The water is unsafe for drinking.</p>
+                        </div>
+                    """, unsafe_allow_html=True)
 
         except Exception as e:
             st.error(f"An error occurred during prediction: {str(e)}")
+
 
     # Add information about the model
     with st.expander("About this predictor"):
