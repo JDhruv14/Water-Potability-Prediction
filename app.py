@@ -33,18 +33,6 @@ def load_model():
         st.error("Model file not found in 'models/' directory. Please check the path.")
         return None
 
-def validate_numeric_input(value, min_val, max_val, field_name):
-    try:
-        num_value = float(value)
-        if min_val <= num_value <= max_val:
-            return num_value
-        else:
-            st.error(f"{field_name} must be between {min_val} and {max_val}")
-            return None
-    except ValueError:
-        st.error(f"{field_name} must be a number")
-        return None
-
 # Page configuration
 st.set_page_config(page_title="Water Potability Prediction", page_icon="💧")
 
@@ -63,19 +51,19 @@ if model:
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        ph = st.number_input('pH Level', min_value=0.0, max_value=14.0, help="Acidity or alkalinity of water")
-        hardness = st.number_input('Hardness (mg/L)', min_value=0.0, max_value=500.0, help="Concentration of dissolved calcium and magnesium")
+        ph = st.number_input('pH Level', min_value=0.0, max_value=14.0, help="Recommended range: 6.5 - 8.5")
+        hardness = st.number_input('Hardness (mg/L)', min_value=0.0, max_value=300.0, help="Maximum safe level: 300 mg/L")
         solids = st.number_input('Solids (mg/L)', min_value=0.0, max_value=50000.0, help="Total dissolved solids in water")
     
     with col2:
-        chloramines = st.number_input('Chloramines (mg/L)', min_value=0.0, max_value=10.0, help="Amount of chlorine compounds in water")
-        sulfate = st.number_input('Sulfate (mg/L)', min_value=0.0, max_value=500.0, help="Sulfate concentration in water")
-        conductivity = st.number_input('Conductivity (μS/cm)', min_value=0.0, max_value=2000.0, help="Water's ability to conduct electricity")
+        chloramines = st.number_input('Chloramines (ppm)', min_value=0.0, max_value=4.0, help="Maximum safe level: 4 ppm")
+        sulfate = st.number_input('Sulfate (mg/L)', min_value=0.0, max_value=250.0, help="Maximum safe level: 250 mg/L")
+        conductivity = st.number_input('Conductivity (μS/cm)', min_value=0.0, max_value=500.0, help="Maximum safe level: 500 μS/cm")
     
     with col3:
-        organic_carbon = st.number_input('Organic Carbon (mg/L)', min_value=0.0, max_value=30.0, help="Amount of organic material in water")
-        trihalomethanes = st.number_input('Trihalomethanes (μg/L)', min_value=0.0, max_value=200.0, help="Concentration of trihalomethanes")
-        turbidity = st.number_input('Turbidity (NTU)', min_value=0.0, max_value=10.0, help="Cloudiness of water")
+        organic_carbon = st.number_input('Organic Carbon (mg/L)', min_value=0.0, max_value=2.0, help="Maximum safe level: 2 mg/L")
+        trihalomethanes = st.number_input('Trihalomethanes (μg/L)', min_value=0.0, max_value=80.0, help="Maximum safe level: 80 μg/L")
+        turbidity = st.number_input('Turbidity (NTU)', min_value=0.0, max_value=5.0, help="Maximum safe level: 5 NTU")
     
     # Predict button
     if st.button('Predict Potability', type='primary'):
@@ -99,19 +87,19 @@ if model:
 
             # Display result with custom styling
             if prediction[0] == 1:
-                st.markdown("""
+                st.markdown(f"""
                     <div style='background-color: #E1FFE4; padding: 20px; border-radius: 10px;'>
                         <h3 style='color: #6BFF6B; margin: 0;'>✅ Water is Potable</h3>
-                        <p style='color: #4CAF50;'>The water is safe to drink. Probability: {:.1f}%</p>
+                        <p style='color: #4CAF50;'>The water is safe to drink. Probability: {probability * 100:.1f}%</p>
                     </div>
-                """.format(probability * 100), unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
             else:
-                st.markdown("""
+                st.markdown(f"""
                     <div style='background-color: #FFE4E1; padding: 20px; border-radius: 10px;'>
                         <h3 style='color: #FF6B6B; margin: 0;'>⚠️ Water is Not Potable</h3>
-                        <p style='color: #FF3333;'>The water is unsafe for drinking. Probability: {:.1f}%</p>
+                        <p style='color: #FF3333;'>The water is unsafe for drinking. Probability: {probability * 100:.1f}%</p>
                     </div>
-                """.format(probability * 100), unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
         
         except Exception as e:
             st.error(f"An error occurred during prediction: {str(e)}")
@@ -121,11 +109,15 @@ if model:
         st.markdown("""
         This water potability prediction model uses a machine learning algorithm trained on water quality data.
         The model evaluates water safety based on key chemical and physical properties.
-        
-        **Features used:**
-        - pH Level and Hardness
-        - Solids and Sulfate concentration
-        - Conductivity and Organic Carbon
-        - Trihalomethanes and Turbidity
-        - Chloramine levels
+
+        **Features used and recommended limits:**
+        - **pH Level:** 6.5 - 8.5 (Safe range)
+        - **Hardness:** ≤ 300 mg/L
+        - **Solids:** No strict limit, total dissolved solids
+        - **Chloramines:** ≤ 4 ppm
+        - **Sulfate:** ≤ 250 mg/L
+        - **Conductivity:** ≤ 500 μS/cm
+        - **Organic Carbon:** ≤ 2 mg/L
+        - **Trihalomethanes:** ≤ 80 μg/L
+        - **Turbidity:** ≤ 5 NTU
         """)
