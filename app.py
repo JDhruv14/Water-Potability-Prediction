@@ -3,6 +3,32 @@ import pickle
 import streamlit as st
 import pandas as pd
 
+# Custom Header with Styling
+st.markdown("""
+    <div class="header-container">
+        <h1>Water Potability Prediction</h1>
+        <p>This application predicts the potability of water based on key physicochemical features. 
+        Simply enter the required values below and let the app determine whether the water is potable.</p>
+    </div>
+    <style>
+        .header-container {
+            background-color: #f0f2f6;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .header-container h1 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .header-container p {
+            color: #333;
+            font-size: 16px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Function to Load the Model
 @st.cache_resource
 def load_model():
     model_path = os.path.join(os.path.dirname(__file__), 'models', 'water_potability_random_forest.pkl')
@@ -12,18 +38,11 @@ def load_model():
         st.error("Model file not found in 'models/' directory. Please check the path.")
         return None
 
-# Page configuration
-st.set_page_config(page_title="Water Potability Prediction", page_icon="💧")
-
-st.title('💧 Water Potability Prediction')
-st.markdown("""
-This app predicts whether the given water sample is potable based on various water quality parameters.
-""")
-
 model = load_model()
 
+# Main App Logic
 if model:
-    # Create layout with 3 columns
+    # Create a 3-column layout for input fields
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -41,10 +60,10 @@ if model:
         trihalomethanes = st.number_input('Trihalomethanes (μg/L)', value=50.0)
         turbidity = st.number_input('Turbidity (NTU)', value=1.0)
 
-    # Predict button
+    # Predict Button and Logic
     if st.button('Predict Potability', type='primary'):
         try:
-            # Prepare input data with correct feature names
+            # Prepare input data as a DataFrame with correct feature names
             input_data = pd.DataFrame({
                 'ph': [ph],  
                 'Hardness': [hardness],
@@ -57,27 +76,26 @@ if model:
                 'Turbidity': [turbidity]
             })
 
-            # Check if all inputs are zero
+            # Check for all-zero inputs
             if all(value == 0 for value in input_data.iloc[0]):
-                prediction = 0
-                st.markdown(f"""
+                st.markdown("""
                     <div style='background-color: #FFE4E1; padding: 20px; border-radius: 10px;'>
                         <h3 style='color: #FF6B6B; margin: 0;'>⚠️ Water is Not Potable</h3>
                         <p style='color: #FF3333;'>The water is unsafe for drinking.</p>
                     </div>
                 """, unsafe_allow_html=True)
             else:
-                # Make prediction using the model
+                # Make prediction using the loaded model
                 prediction = model.predict(input_data)[0]
                 if prediction == 1:
-                    st.markdown(f"""
+                    st.markdown("""
                         <div style='background-color: #E1FFE4; padding: 20px; border-radius: 10px;'>
                             <h3 style='color: #6BFF6B; margin: 0;'>✅ Water is Potable</h3>
                             <p style='color: #4CAF50;'>The water is safe to drink.</p>
                         </div>
                     """, unsafe_allow_html=True)
                 else:
-                    st.markdown(f"""
+                    st.markdown("""
                         <div style='background-color: #FFE4E1; padding: 20px; border-radius: 10px;'>
                             <h3 style='color: #FF6B6B; margin: 0;'>⚠️ Water is Not Potable</h3>
                             <p style='color: #FF3333;'>The water is unsafe for drinking.</p>
@@ -87,7 +105,7 @@ if model:
         except Exception as e:
             st.error(f"An error occurred during prediction: {str(e)}")
 
-    # Expandable section for more info
+    # Additional Information Expander (First Toggle - Features and Limits)
     with st.expander("About this predictor"):
         st.markdown("""
         This water potability prediction model uses a machine learning algorithm trained on water quality data.
@@ -103,4 +121,13 @@ if model:
         - **Organic Carbon:** ≤ 2 mg/L
         - **Trihalomethanes:** ≤ 80 μg/L
         - **Turbidity:** ≤ 5 NTU
+        """)
+
+    # Expandable Information Panel (Moved to the End)
+    with st.expander("About This App"):
+        st.markdown("""
+        **Developed by:** Dhruv Jaradi and Kevin Dave  
+        **Dataset Used:** Water Potability Dataset (source: [Kaggle](https://www.kaggle.com/datasets/adityakadiwal/water-potability))  
+        **Machine Learning Algorithm:** Random Forest Classifier  
+        **Description:** This app uses a Random Forest model trained on physicochemical water features like pH, Hardness, and Solids to predict potability.  
         """)
