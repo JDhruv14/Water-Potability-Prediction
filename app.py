@@ -135,7 +135,5 @@ if model:
         **Developed by:** Dhruv Jaradi and Kevin Dave  
         **Dataset Used:** Water Potability Dataset (source: [Kaggle](https://www.kaggle.com/datasets/adityakadiwal/water-potability))  
         **Machine Learning Algorithm:** Random Forest Classifier  
-        **Description:** This app uses a Random Forest model trained on physicochemical water features like pH, Hardness, and Solids to predict potability.  
-        **Image:**  
-        ![Water Potability](https://images.unsplash.com/photo-1580460238009-2f9f9b4b7f9b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60)
+        **Description:** This app uses a Random Forest model trained on physicochemical water features to predict potability. 
         """)
