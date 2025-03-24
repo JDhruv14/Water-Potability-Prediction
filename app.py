@@ -19,13 +19,19 @@ st.markdown("""
         }
         .header-container h1 {
             color: #4CAF50;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .header-container p {
             color: #333;
             font-size: 16px;
         }
     </style>
+""", unsafe_allow_html=True)
+
+# Add Space and Heading
+st.markdown("""
+    <div style="height: 40px;"></div>
+    <h2 style="color: #4CAF50; text-align: center;">Enter Water Quality Features</h2>
 """, unsafe_allow_html=True)
 
 # Function to Load the Model
@@ -105,7 +111,7 @@ if model:
         except Exception as e:
             st.error(f"An error occurred during prediction: {str(e)}")
 
-    # Additional Information Expander (First Toggle - Features and Limits)
+    # Additional Information Expander (Features and Limits)
     with st.expander("About this predictor"):
         st.markdown("""
         This water potability prediction model uses a machine learning algorithm trained on water quality data.
@@ -130,4 +136,6 @@ if model:
         **Dataset Used:** Water Potability Dataset (source: [Kaggle](https://www.kaggle.com/datasets/adityakadiwal/water-potability))  
         **Machine Learning Algorithm:** Random Forest Classifier  
         **Description:** This app uses a Random Forest model trained on physicochemical water features like pH, Hardness, and Solids to predict potability.  
+        **Image:**  
+        ![Water Potability](https://images.unsplash.com/photo-1580460238009-2f9f9b4b7f9b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60)
         """)
