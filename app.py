@@ -13,13 +13,13 @@ st.markdown("""
     <style>
         .header-container {
             background-color: #f0f2f6;
-            padding: 40px;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
         }
         .header-container h1 {
             color: #4CAF50;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         .header-container p {
             color: #333;
