@@ -27,19 +27,19 @@ if model:
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        ph = st.number_input('pH Level', help="Typical range: 6.5 - 8.5")
-        hardness = st.number_input('Hardness (mg/L)')
-        solids = st.number_input('Solids (mg/L)')
+        ph = st.number_input('pH Level', min_value=0.0, max_value=14.0, value=7.0, help="Typical range: 6.5 - 8.5")
+        hardness = st.number_input('Hardness (mg/L)', value=150.0)
+        solids = st.number_input('Solids (mg/L)', value=500.0)
     
     with col2:
-        chloramines = st.number_input('Chloramines (ppm)')
-        sulfate = st.number_input('Sulfate (mg/L)')
-        conductivity = st.number_input('Conductivity (μS/cm)')
+        chloramines = st.number_input('Chloramines (ppm)', value=2.0)
+        sulfate = st.number_input('Sulfate (mg/L)', value=100.0)
+        conductivity = st.number_input('Conductivity (μS/cm)', value=400.0)
     
     with col3:
-        organic_carbon = st.number_input('Organic Carbon (mg/L)')
-        trihalomethanes = st.number_input('Trihalomethanes (μg/L)')
-        turbidity = st.number_input('Turbidity (NTU)')
+        organic_carbon = st.number_input('Organic Carbon (mg/L)', value=1.0)
+        trihalomethanes = st.number_input('Trihalomethanes (μg/L)', value=50.0)
+        turbidity = st.number_input('Turbidity (NTU)', value=1.0)
 
     # Predict button
     if st.button('Predict Potability', type='primary'):
@@ -57,25 +57,32 @@ if model:
                 'Turbidity': [turbidity]
             })
 
-            # Make prediction
-            prediction = model.predict(input_data)[0]
-            probability = model.predict_proba(input_data)[0][1]  # Probability of being potable
-
-            # Show result with the same old UI
-            if prediction == 1:
-                st.markdown(f"""
-                    <div style='background-color: #E1FFE4; padding: 20px; border-radius: 10px;'>
-                        <h3 style='color: #6BFF6B; margin: 0;'>✅ Water is Potable</h3>
-                        <p style='color: #4CAF50;'>The water is safe to drink. Probability: {probability * 100:.1f}%</p>
-                    </div>
-                """, unsafe_allow_html=True)
-            else:
+            # Check if all inputs are zero
+            if all(value == 0 for value in input_data.iloc[0]):
+                prediction = 0
                 st.markdown(f"""
                     <div style='background-color: #FFE4E1; padding: 20px; border-radius: 10px;'>
                         <h3 style='color: #FF6B6B; margin: 0;'>⚠️ Water is Not Potable</h3>
-                        <p style='color: #FF3333;'>The water is unsafe for drinking. Probability: {probability * 100:.1f}%</p>
+                        <p style='color: #FF3333;'>The water is unsafe for drinking.</p>
                     </div>
                 """, unsafe_allow_html=True)
+            else:
+                # Make prediction using the model
+                prediction = model.predict(input_data)[0]
+                if prediction == 1:
+                    st.markdown(f"""
+                        <div style='background-color: #E1FFE4; padding: 20px; border-radius: 10px;'>
+                            <h3 style='color: #6BFF6B; margin: 0;'>✅ Water is Potable</h3>
+                            <p style='color: #4CAF50;'>The water is safe to drink.</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.markdown(f"""
+                        <div style='background-color: #FFE4E1; padding: 20px; border-radius: 10px;'>
+                            <h3 style='color: #FF6B6B; margin: 0;'>⚠️ Water is Not Potable</h3>
+                            <p style='color: #FF3333;'>The water is unsafe for drinking.</p>
+                        </div>
+                    """, unsafe_allow_html=True)
 
         except Exception as e:
             st.error(f"An error occurred during prediction: {str(e)}")
