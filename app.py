@@ -13,7 +13,7 @@ st.markdown("""
     <style>
         .header-container {
             background-color: #f0f2f6;
-            padding: 20px;
+            padding: 40px;
             border-radius: 10px;
             text-align: center;
         }
